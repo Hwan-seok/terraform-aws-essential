@@ -1,6 +1,6 @@
-resource "aws_security_group" "lb_sg" {
+resource "aws_security_group" "sg_lb" {
 
-  name   = "lb-sg"
+  name   = "sg_lb"
   vpc_id = aws_vpc.main.id
 
   ingress {
@@ -14,14 +14,14 @@ resource "aws_security_group" "lb_sg" {
     cidr_blocks = [var.iogress_everywhere]
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = var.protocol_any
   }
 
   depends_on = [aws_vpc.main]
 }
 
-resource "aws_security_group" "instance-sg" {
-  name   = "instance-sg"
+resource "aws_security_group" "sg_instance" {
+  name   = "sg_instance"
   vpc_id = aws_vpc.main.id
 
   ingress {
@@ -41,7 +41,7 @@ resource "aws_security_group" "instance-sg" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"
+    protocol    = var.protocol_any
     cidr_blocks = [var.iogress_everywhere]
   }
   depends_on = [aws_vpc.main]
@@ -56,7 +56,7 @@ resource "aws_security_group" "instance-sg" {
 #   to_port           = 0
 #   protocol          = "-1"
 #   cidr_blocks       = [var.iogress_everywhere]
-#   security_group_id = aws_security_group.instance-sg.id
+#   security_group_id = aws_security_group.instance_sg.id
 
 #   lifecycle {
 #     create_before_destroy = true

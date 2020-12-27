@@ -1,22 +1,15 @@
-provider "aws" {
-  region  = "ap-northeast-2"
-  profile = "damin"
-}
-
-
 resource "aws_launch_configuration" "instance" {
 
   image_id        = "ami-007b7745d0725de95"
   instance_type   = "t2.micro"
-  security_groups = [aws_security_group.instance-sg.id]
+  security_groups = [var.security_group_instance_id]
   key_name        = "terratest"
 
 
-  user_data = <<-EOF
-				#!/bin/bash
-				echo "hello!!!" > index.html
-				nohup busybox httpd -f -p ${var.server_port} &
-				EOF
+  user_data = templatefile(
+    "${path.module}/start.tmpl",
+    { server_port = var.server_port }
+  )
 
   # associate_public_ip_address = true
 
@@ -27,7 +20,7 @@ resource "aws_launch_configuration" "instance" {
 
 resource "aws_autoscaling_group" "ec2_autocaling" {
   launch_configuration = aws_launch_configuration.instance.id
-  vpc_zone_identifier  = aws_subnet.public.*.id
+  vpc_zone_identifier  = var.subnet_public_id_list
 
   #   availability_zones = data.aws_availability_zones.all.names
 
@@ -47,9 +40,9 @@ resource "aws_autoscaling_group" "ec2_autocaling" {
 
 resource "aws_lb_target_group" "lb_target_group" {
   name     = "terra-target-group"
-  port     = 8080
+  port     = var.server_port
   protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
+  vpc_id   = var.vpc_id
 
   health_check {
     healthy_threshold   = 2
@@ -63,13 +56,13 @@ resource "aws_lb" "alb" {
   name               = "terraform-elb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.lb_sg.id]
-  subnets            = aws_subnet.public.*.id
+  security_groups    = [var.security_group_lb_id]
+  subnets            = var.subnet_public_id_list
 }
 
 resource "aws_lb_listener" "alb_listener" {
   load_balancer_arn = aws_lb.alb.arn
-  port              = 80
+  port              = var.lb_listener_port
   protocol          = "HTTP"
 
   default_action {
@@ -77,23 +70,3 @@ resource "aws_lb_listener" "alb_listener" {
     target_group_arn = aws_lb_target_group.lb_target_group.arn
   }
 }
-
-# resource "aws_elb" "elb" {
-#   name               = "terraform-elb"
-#   availability_zones = data.aws_availability_zones.all.names
-#   security_groups    = ["${aws_security_group.lb-sg.id}"]
-
-#   listener {
-#     lb_port           = var.lb_listener_port
-#     lb_protocol       = "http"
-#     instance_port     = var.server_port
-#     instance_protocol = "http"
-#   }
-#   health_check {
-#     healthy_threshold   = 2
-#     unhealthy_threshold = 2
-#     timeout             = 3
-#     interval            = 30
-#     target              = "HTTP:${var.server_port}/"
-#   }
-# }

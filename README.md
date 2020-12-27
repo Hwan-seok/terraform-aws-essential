@@ -8,6 +8,7 @@
 
 ```bash
 $ aws configure # configure your profile
+$ cd live/dev/service
 $ vi main.tf # change provider profile as created before
 $ terraform init
 ```
