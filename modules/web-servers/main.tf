@@ -38,6 +38,24 @@ resource "aws_autoscaling_group" "ec2_autocaling" {
   }
 }
 
+resource "aws_autoscaling_policy" "asg_policy" {
+  name = "asg_policy"
+  # scaling_adjustment = 2
+  policy_type     = "TargetTrackingScaling"
+  adjustment_type = "ChangeInCapacity"
+  # cooldown               = 120
+  autoscaling_group_name = aws_autoscaling_group.ec2_autocaling.name
+
+
+  target_tracking_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+
+    target_value = 40.0
+  }
+}
+
 resource "aws_lb_target_group" "lb_target_group" {
   name     = "terra-target-group"
   port     = var.server_port
