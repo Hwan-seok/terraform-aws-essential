@@ -25,3 +25,7 @@ variable "subnet_public_id_list" {
 variable "subnet_private_id_list" {
 
 }
+
+variable "stage" {
+  type = string
+}

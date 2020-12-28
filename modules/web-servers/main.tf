@@ -33,7 +33,7 @@ resource "aws_autoscaling_group" "ec2_autocaling" {
 
   tag {
     key                 = "Name"
-    value               = "terraform-instance"
+    value               = "terraform-instance-${var.stage}"
     propagate_at_launch = true
   }
 }
@@ -57,7 +57,7 @@ resource "aws_autoscaling_policy" "asg_policy" {
 }
 
 resource "aws_lb_target_group" "lb_target_group" {
-  name     = "terra-target-group"
+  name     = "terra-target-group-${var.stage}"
   port     = var.server_port
   protocol = "HTTP"
   vpc_id   = var.vpc_id
@@ -71,11 +71,15 @@ resource "aws_lb_target_group" "lb_target_group" {
 }
 
 resource "aws_lb" "alb" {
-  name               = "terraform-elb"
+  name               = "terraform-alb-${var.stage}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = var.security_group_lb_ids
   subnets            = var.subnet_public_id_list
+
+  tags = {
+    Name = "lb-${var.stage}"
+  }
 }
 
 resource "aws_lb_listener" "alb_listener" {
