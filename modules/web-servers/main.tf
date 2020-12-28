@@ -2,7 +2,7 @@ resource "aws_launch_configuration" "instance" {
 
   image_id        = "ami-007b7745d0725de95"
   instance_type   = "t2.micro"
-  security_groups = [var.security_group_instance_id]
+  security_groups = var.security_group_instance_ids
   key_name        = "terratest"
 
 
@@ -20,7 +20,7 @@ resource "aws_launch_configuration" "instance" {
 
 resource "aws_autoscaling_group" "ec2_autocaling" {
   launch_configuration = aws_launch_configuration.instance.id
-  vpc_zone_identifier  = var.subnet_public_id_list
+  vpc_zone_identifier  = var.subnet_private_id_list
 
   #   availability_zones = data.aws_availability_zones.all.names
 
@@ -74,7 +74,7 @@ resource "aws_lb" "alb" {
   name               = "terraform-elb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [var.security_group_lb_id]
+  security_groups    = var.security_group_lb_ids
   subnets            = var.subnet_public_id_list
 }
 

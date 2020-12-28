@@ -17,6 +17,36 @@ resource "aws_security_group" "sg_lb" {
     protocol    = var.protocol_any
   }
 
+  tags = {
+    Name = "for_lb"
+  }
+
+  depends_on = [aws_vpc.main]
+}
+
+resource "aws_security_group" "sg_rds" {
+
+  name   = "sg_rds"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    cidr_blocks = [var.iogress_everywhere]
+    from_port   = var.rds_ingress_port
+    to_port     = var.rds_ingress_port
+    protocol    = "tcp"
+  }
+
+  egress {
+    cidr_blocks = [var.iogress_everywhere]
+    from_port   = 0
+    to_port     = 0
+    protocol    = var.protocol_any
+  }
+
+  tags = {
+    Name = "for_rds_mysql"
+  }
+
   depends_on = [aws_vpc.main]
 }
 
@@ -44,6 +74,11 @@ resource "aws_security_group" "sg_instance" {
     protocol    = var.protocol_any
     cidr_blocks = [var.iogress_everywhere]
   }
+
+  tags = {
+    Name = "for_instance"
+  }
+
   depends_on = [aws_vpc.main]
 
   #   lifecycle {

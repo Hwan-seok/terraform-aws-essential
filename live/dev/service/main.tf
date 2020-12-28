@@ -4,17 +4,13 @@ provider "aws" {
 }
 
 
-module "vpc" {
-  source = "../../../modules/vpc"
-}
-
 module "web_server_cluster" {
   source = "../../../modules/web-servers"
 
-  vpc_id                     = module.vpc.vpc_id
-  security_group_instance_id = module.vpc.security_group_instance_id
-  security_group_lb_id       = module.vpc.security_group_lb_id
-  subnet_public_id_list      = module.vpc.subnet_public_id_list
+  vpc_id                      = data.aws_vpc.main.id
+  security_group_instance_ids = data.aws_security_groups.for_instance.ids
+  security_group_lb_ids       = data.aws_security_groups.for_lb.ids
+  subnet_private_id_list      = data.aws_subnet_ids.private.ids
+  subnet_public_id_list       = data.aws_subnet_ids.public.ids
 }
-
 

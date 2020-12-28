@@ -14,3 +14,8 @@ output "subnet_public_id_list" {
 
   value = aws_subnet.public.*.id
 }
+
+output "subnet_private_id_list" {
+
+  value = aws_subnet.private.*.id
+}
