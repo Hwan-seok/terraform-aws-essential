@@ -8,7 +8,7 @@
 
 ```bash
 $ aws configure # configure your profile
-$ cd live/dev/service
+$ cd live/${wanna deploy} # caution for dependencies
 $ vi main.tf # change provider profile as created before
 $ terraform init
 ```
@@ -24,3 +24,10 @@ $ terraform apply
 ```bash
 $ terraform destroy
 ```
+
+### Dependencies
+
+- Must deploy LTR
+
+  > VPC > LB > APP
+  > VPC > RDS
