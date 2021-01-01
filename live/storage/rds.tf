@@ -44,7 +44,7 @@ module "db" {
   major_engine_version = "8.0"
 
   # Database Deletion Protection
-  deletion_protection = true
+  deletion_protection = false
 
   create_db_parameter_group = false
   parameter_group_name      = aws_db_parameter_group.rds_mysql_pg.name

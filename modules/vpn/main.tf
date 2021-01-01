@@ -5,7 +5,7 @@ resource "aws_instance" "vpn" {
   subnet_id              = var.public_subnet
   vpc_security_group_ids = [aws_security_group.sg_vpn.id]
 
-  key_name = "terratest"
+  key_name = var.key_name
 
   user_data = file("${path.module}/init-vpn.sh")
 

@@ -1,8 +1,19 @@
 #!/bin/bash
 
-cat > index.html << EOF 
-echo "HELLO!!!"
+apt update -y
+apt install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+apt update -y
+apt-cache policy docker-ce
+apt install docker-ce -y
 
-EOF
+usermod -aG docker ubuntu
+systemctl enable docker
 
-nohup busybox httpd -f -p ${server_port} &
+apt install -y awscli
+
+
+aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${repository_url}
+
+docker run -d -p ${server_port}:${server_port} ${repository_url}:${image_version}
