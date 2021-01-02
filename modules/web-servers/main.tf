@@ -26,6 +26,8 @@ resource "aws_launch_configuration" "instance" {
 }
 
 resource "aws_autoscaling_group" "ec2_autocaling" {
+  name = "tf-ag-${var.stage}-${aws_launch_configuration.instance.name}"
+
   launch_configuration = aws_launch_configuration.instance.id
   vpc_zone_identifier  = data.aws_subnet_ids.public.ids
 
@@ -33,16 +35,21 @@ resource "aws_autoscaling_group" "ec2_autocaling" {
 
   target_group_arns = [var.target_group_arn]
   health_check_type = "ELB"
+  force_delete      = true
 
   desired_capacity = 2
   min_size         = 2
   max_size         = 10
-  force_delete     = true
+  min_elb_capacity = 2
 
   tag {
     key                 = "Name"
     value               = "terraform-instance-${var.stage}"
     propagate_at_launch = true
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 

@@ -25,6 +25,14 @@ module "vpn" {
   depends_on = [module.vpc]
 }
 
+module "vpn_domain" {
+  source = "../../modules/route53/ip"
+
+  connect_route53_zone_id = "Z08511822BCBN7HAEPLU2"
+  domain_name             = "vpn.hwan.tech"
+  connect_ip              = module.vpn.eip_ip
+}
+
 
 module "ecr" {
   source = "../../modules/ecr"

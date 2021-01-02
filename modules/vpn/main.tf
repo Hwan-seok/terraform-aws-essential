@@ -1,6 +1,6 @@
 resource "aws_instance" "vpn" {
   ami           = "ami-007b7745d0725de95"
-  instance_type = "t3a.micro"
+  instance_type = "t2.micro"
 
   subnet_id              = var.public_subnet
   vpc_security_group_ids = [aws_security_group.sg_vpn.id]
@@ -15,6 +15,16 @@ resource "aws_instance" "vpn" {
 
   depends_on = [aws_security_group.sg_vpn]
 }
+
+resource "aws_eip" "vpn" {
+  vpc = true
+}
+
+resource "aws_eip_association" "vpn" {
+  instance_id   = aws_instance.vpn.id
+  allocation_id = aws_eip.vpn.id
+}
+
 
 resource "aws_security_group" "sg_vpn" {
   name   = "sg_vpn"

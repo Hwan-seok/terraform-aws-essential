@@ -11,7 +11,7 @@ locals {
   route53_zone_id = "Z08511822BCBN7HAEPLU2"
   environment = {
     dev = {
-      image_version = "dev-0.0.1",
+      image_version = "dev-0.0.4",
       domain_name   = "devapi.hwan.tech",
     },
     stage = {
@@ -39,7 +39,7 @@ module "alb" {
 
 module "domain" {
   for_each = local.environment
-  source   = "../../modules/route53"
+  source   = "../../modules/route53/alias"
 
   connect_route53_zone_id = local.route53_zone_id
   domain_name             = each.value.domain_name

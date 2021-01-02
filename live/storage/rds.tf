@@ -1,7 +1,25 @@
 provider "aws" {
-  region  = var.region
-  profile = var.profile
+  region  = local.provider.region
+  profile = local.provider.profile
 }
+
+locals {
+  provider = {
+    region  = "ap-northeast-2"
+    profile = "terraform"
+  }
+}
+
+
+# terraform {
+#   backend "s3" {
+#     bucket  = "terraform-state"
+#     key     = "storage/terraform.tfstate"
+#     region  = "ap-northeast-2"
+#     encrypt = true
+# dynamodb_table = "terraform-lock"
+#   }
+# }
 
 module "db" {
   source  = "terraform-aws-modules/rds/aws"

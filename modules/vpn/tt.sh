@@ -3,7 +3,7 @@
 
 OVPN_DATA="/home/ubuntu/ovpn-data"
 
-sudo docker run -v $OVPN_DATA:/etc/openvpn --log-driver=none --rm kylemanna/openvpn ovpn_genconfig -u udp://vpn.test.com:10068 
+sudo docker run -v $OVPN_DATA:/etc/openvpn --log-driver=none --rm kylemanna/openvpn ovpn_genconfig -u udp://vpn.hwan.tech:10068 
 
 # 여기서 비밀번호 입력 요구, 비밀번호 잘 기억할것
 sudo docker run -v $OVPN_DATA:/etc/openvpn --log-driver=none --rm -it kylemanna/openvpn ovpn_initpki
