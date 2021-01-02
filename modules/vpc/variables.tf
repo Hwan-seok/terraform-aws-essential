@@ -25,3 +25,7 @@ variable "protocol_any" {
 
 variable "rds_ingress_port" {
 }
+
+variable "enable_nat" {
+  type = bool
+}

@@ -12,6 +12,8 @@ module "vpc" {
   server_port      = 4000
   lb_listener_port = 80
   rds_ingress_port = 3306
+
+  enable_nat = false
 }
 
 module "vpn" {

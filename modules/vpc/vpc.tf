@@ -58,9 +58,13 @@ resource "aws_route_table_association" "for_public" {
 resource "aws_route_table" "for_private" {
   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block     = var.iogress_everywhere
-    nat_gateway_id = aws_nat_gateway.nat_gateway_for_private.id
+  dynamic "route" {
+    for_each = var.enable_nat ? [true] : []
+
+    content {
+      cidr_block     = var.iogress_everywhere
+      nat_gateway_id = aws_nat_gateway.nat_gateway_for_private[0].id
+    }
   }
 
   tags = {
@@ -85,10 +89,12 @@ resource "aws_internet_gateway" "i_gw" {
 
 # --- NAT 게이트웨이
 resource "aws_nat_gateway" "nat_gateway_for_private" {
-  allocation_id = aws_eip.nat_eip.id
+  count         = var.enable_nat ? 1 : 0
+  allocation_id = aws_eip.nat_eip[count.index].id
   subnet_id     = aws_subnet.private.0.id
 }
 
 resource "aws_eip" "nat_eip" {
-  vpc = true
+  count = var.enable_nat ? 1 : 0
+  vpc   = true
 }
